@@ -165,19 +165,22 @@ class App:
                         altone = None
             else:
                 dpg.configure_item("statusbar", default_value="Detecting tone", color=(255, 255, 0))
-                time.sleep(self.delay_detect_tone + 2)
-                output = self.detecttone()
-                print(output)
-                if output == 1:
-                    altone853 = tonegen(853, 5)
-                    altone960 = tonegen(960, 5)
-                    altone = ((altone853 + altone960) * 0.5)
-                else:
-                    dpg.configure_item("encoderbroadcastbutton", show=True)
-                    dpg.configure_item("statusbar", default_value="Ready", color=(0, 255, 0))
-                    self.decoder_is_boardcast = True
-                    return
+                time.sleep(self.delay_detect_tone + 1)
+                # output = self.detecttone()
+                # print(output)
+                # if output == 1:
+                #     altone853 = tonegen(853, 5)
+                #     altone960 = tonegen(960, 5)
+                #     altone = ((altone853 + altone960) * 0.5)
+                # else:
+                #     dpg.configure_item("encoderbroadcastbutton", show=True)
+                #     dpg.configure_item("statusbar", default_value="Ready", color=(0, 255, 0))
+                #     self.decoder_is_boardcast = True
+                #     return
 
+                altone853 = tonegen(853, 3)
+                altone960 = tonegen(960, 3)
+                altone = ((altone853 + altone960) * 0.5)
                 Audio_messages = "waitvoicerecevice"
 
 
