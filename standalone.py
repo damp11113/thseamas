@@ -281,6 +281,18 @@ class App:
 
         stream = self.paudio.open(format=pyaudio.paFloat32, channels=1, rate=self.sample_rate, output=True, output_device_index=device_index_output, frames_per_buffer=1024)
 
+        if isinstance(Amessages, str):
+            if Amessages == "waitvoicerecevice":
+                device_index_input_EAS = 0
+                for i in range(self.paudio.get_device_count()):
+                    dev = self.paudio.get_device_info_by_index(i)
+                    if dev['name'] == self.device_name_input_EAS:
+                        device_index_input_EAS = dev['index']
+                        break
+
+                streamEASin = self.paudio.open(format=pyaudio.paFloat32, channels=1, rate=self.sample_rate, Input=True, output_device_index=device_index_input_EAS, frames_per_buffer=1024)
+                self.isrecordrecevicer = True
+
         dpg.configure_item("statusbar", default_value="Sending Header", color=(0, 255, 0))
         for i in range(3):
             stream.write(Header.astype(np.float32).tobytes())
@@ -319,6 +331,10 @@ class App:
                         for frame in self.currentvoicemessagesdata:
                             stream.write(frame)
                         self.currentvoicemessagesdata = []
+                    elif Amessages == "waitvoicerecevice":
+                        while self.isrecordrecevicer:
+                            data = streamEASin.read(1024)
+                            stream.write(data)
                 else:
                     dpg.configure_item("statusbar", default_value="Sending Messages", color=(0, 255, 0))
                     stream.write(Amessages.astype(np.float32).tobytes())
@@ -359,6 +375,7 @@ class App:
                     self.latest_part_time_decoder = 0
                     self.delay_detect_tone = 0
                     first_part = True
+                    self.isrecordrecevicer = False
 
             if not self.decoder_is_boardcast:
                 if output.startswith("EAS (part): "):
@@ -368,7 +385,6 @@ class App:
 
                 if output.startswith("EAS: ") and output.endswith("-"):
                     self.delay_detect_tone = time.time() - self.latest_part_time_decoder
-                    print(self.delay_detect_tone)
                     dpg.set_value("decoderstatuslabel", "EAS Detected")
                     self.decoder_is_boardcast = True
                     broadthread = threading.Thread(target=self.startbroadcast, args=(output,))
