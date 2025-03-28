@@ -41,7 +41,6 @@ class App:
         self.device_name_input = "" # microphone input
         self.device_name_input_EAS = "CABLE Output (VB-Audio Virtual " # microphone input from receiver
         self.device_name_output = "CABLE Input (VB-Audio Virtual C" # output to mixer or processor
-
         self.enableTHvoice = False # Beta
         self.sample_rate = 48000
 
@@ -367,6 +366,7 @@ class App:
             output = line.strip()
             self.update_status(output)
             if output.endswith("NNNN"):
+                self.isrecordrecevicer = False
                 NNNN_count += 1
                 if NNNN_count >= 3:
                     time.sleep(2)
@@ -375,7 +375,6 @@ class App:
                     self.latest_part_time_decoder = 0
                     self.delay_detect_tone = 0
                     first_part = True
-                    self.isrecordrecevicer = False
 
             if not self.decoder_is_boardcast:
                 if output.startswith("EAS (part): "):
